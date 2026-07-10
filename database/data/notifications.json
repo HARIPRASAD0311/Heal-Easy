@@ -1,0 +1,112 @@
+[
+  {
+    "notificationId": "NOT-N001",
+    "doctorId": "DOC-AA11BB22",
+    "patientId": null,
+    "title": "New patient in queue",
+    "message": "Vikram Gupta has joined your Cardiology queue. Token #2.",
+    "type": "info",
+    "read": false,
+    "time": "2024-11-01T08:30:00",
+    "created_at": "2024-11-01T08:30:00"
+  },
+  {
+    "notificationId": "NOT-N002",
+    "doctorId": "DOC-AA11BB22",
+    "patientId": null,
+    "title": "Urgent patient",
+    "message": "Sanjay Malhotra flagged as high priority. Blood pressure 160/100 mmHg.",
+    "type": "urgent",
+    "read": false,
+    "time": "2024-11-01T07:50:00",
+    "created_at": "2024-11-01T07:50:00"
+  },
+  {
+    "notificationId": "NOT-N003",
+    "doctorId": "DOC-EE55FF66",
+    "patientId": null,
+    "title": "AI Summary ready",
+    "message": "AI clinical notes generated for Anjali Verma's consultation. Please review.",
+    "type": "success",
+    "read": false,
+    "time": "2024-11-01T08:45:00",
+    "created_at": "2024-11-01T08:45:00"
+  },
+  {
+    "notificationId": "NOT-N004",
+    "doctorId": "DOC-EE55FF66",
+    "patientId": null,
+    "title": "Pending approvals",
+    "message": "You have 3 AI-generated consultation notes awaiting your approval.",
+    "type": "warning",
+    "read": false,
+    "time": "2024-11-01T09:00:00",
+    "created_at": "2024-11-01T09:00:00"
+  },
+  {
+    "notificationId": "NOT-N005",
+    "doctorId": "DOC-CC33DD44",
+    "patientId": null,
+    "title": "New patient in queue",
+    "message": "Nikhil Menon has joined your Neurology queue. Token #3.",
+    "type": "info",
+    "read": false,
+    "time": "2024-11-01T10:00:00",
+    "created_at": "2024-11-01T10:00:00"
+  },
+  {
+    "notificationId": "NOT-N006",
+    "doctorId": "DOC-CC33DD44",
+    "patientId": null,
+    "title": "Follow-up due",
+    "message": "Kavya Saxena's follow-up appointment is scheduled for tomorrow at 1:00 PM.",
+    "type": "info",
+    "read": true,
+    "time": "2024-11-01T08:00:00",
+    "created_at": "2024-11-01T08:00:00"
+  },
+  {
+    "notificationId": "NOT-N007",
+    "doctorId": "DOC-GG77HH88",
+    "patientId": null,
+    "title": "Patient cancelled",
+    "message": "Isha Kapoor has cancelled her appointment. Token #3 is now free.",
+    "type": "warning",
+    "read": false,
+    "time": "2024-11-01T09:35:00",
+    "created_at": "2024-11-01T09:35:00"
+  },
+  {
+    "notificationId": "NOT-N008",
+    "doctorId": "DOC-AA11BB22",
+    "patientId": null,
+    "title": "Consultation completed",
+    "message": "Rajesh Sharma's consultation marked as completed. Record saved.",
+    "type": "success",
+    "read": true,
+    "time": "2024-11-01T10:30:00",
+    "created_at": "2024-11-01T10:30:00"
+  },
+  {
+    "notificationId": "NOT-N009",
+    "doctorId": "DOC-EE55FF66",
+    "patientId": null,
+    "title": "Queue growing",
+    "message": "You currently have 7 patients waiting. Estimated total wait: 100 min.",
+    "type": "warning",
+    "read": false,
+    "time": "2024-11-01T11:00:00",
+    "created_at": "2024-11-01T11:00:00"
+  },
+  {
+    "notificationId": "NOT-N010",
+    "doctorId": "DOC-CC33DD44",
+    "patientId": null,
+    "title": "AI Summary ready",
+    "message": "AI clinical notes generated for Neha Kumar's consultation. Please review.",
+    "type": "success",
+    "read": false,
+    "time": "2024-11-01T09:15:00",
+    "created_at": "2024-11-01T09:15:00"
+  }
+]
