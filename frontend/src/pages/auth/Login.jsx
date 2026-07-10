@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { loginPatient, loginDoctor, saveSession } from "../../services/authService";
-import useMutation from "../../hooks/useMutation";
+import { saveSession } from "../../services/authService";
+import { PATIENTS, DOCTORS } from "../../data/mockData";
 
 // ── Logo ──────────────────────────────────────────────────────────
 function Logo() {
@@ -57,69 +57,44 @@ function ErrorBanner({ message }) {
 }
 
 export default function Login() {
-  const [mode, setMode] = useState(null); // null | "patient" | "doctor"
-
-  // Patient form state
+  const [mode, setMode] = useState(null);
   const [phone,    setPhone]    = useState("");
   const [password, setPassword] = useState("");
+  const [email,    setEmail]    = useState("");
+  const [docPass,  setDocPass]  = useState("");
+  const [error,    setError]    = useState("");
 
-  // Doctor form state
-  const [email,   setEmail]   = useState("");
-  const [docPass, setDocPass] = useState("");
-
-  // ── Patient login mutation ────────────────────────────────────
-  const patientMutation = useMutation(
-    (creds) => loginPatient(creds),
-    {
-      onSuccess: (data) => {
-        // Backend returns: { token, patientId, name, role }
-        saveSession({
-          token:     data.token,
-          patientId: data.patientId,
-          role:      data.role ?? "patient",
-        });
-        window.location.href = "/patient/dashboard";
-      },
-    }
-  );
-
-  // ── Doctor login mutation ─────────────────────────────────────
-  const doctorMutation = useMutation(
-    (creds) => loginDoctor(creds),
-    {
-      onSuccess: (data) => {
-        // Backend returns: { token, doctorId, name, role }
-        saveSession({
-          token:    data.token,
-          doctorId: data.doctorId,
-          role:     data.role ?? "doctor",
-        });
-        window.location.href = "/doctor/dashboard";
-      },
-    }
-  );
-
-  // ── Demo shortcuts — bypass backend ──────────────────────────
   function demoPatient() {
-    // PAT-A1B2C3D4 = Rajesh Sharma — first patient in healeasy.db
     saveSession({ token: "demo-patient-token", patientId: "PAT-A1B2C3D4", role: "patient" });
     window.location.href = "/patient/dashboard";
   }
   function demoDoctor() {
-    // DOC-EE55FF66 = Dr. Arjun Reddy — busiest doctor in healeasy.db
     saveSession({ token: "demo-doctor-token", doctorId: "DOC-EE55FF66", role: "doctor" });
     window.location.href = "/doctor/dashboard";
   }
 
-  // ── Submit handlers ───────────────────────────────────────────
-  async function handlePatientSubmit(e) {
+  function handlePatientSubmit(e) {
     e.preventDefault();
-    await patientMutation.mutate({ phone, password }).catch(() => {});
+    setError("");
+    const found = PATIENTS.find(p => p.phone === phone.trim());
+    if (found) {
+      saveSession({ token: `token-${found.patientId}`, patientId: found.patientId, role: "patient" });
+      window.location.href = "/patient/dashboard";
+    } else {
+      setError("No patient found with that phone number.");
+    }
   }
 
-  async function handleDoctorSubmit(e) {
+  function handleDoctorSubmit(e) {
     e.preventDefault();
-    await doctorMutation.mutate({ email, password: docPass }).catch(() => {});
+    setError("");
+    const found = DOCTORS.find(d => d.email === email.trim());
+    if (found) {
+      saveSession({ token: `token-${found.doctorId}`, doctorId: found.doctorId, role: "doctor" });
+      window.location.href = "/doctor/dashboard";
+    } else {
+      setError("No doctor found with that email address.");
+    }
   }
 
   return (
@@ -198,21 +173,20 @@ export default function Login() {
               placeholder="••••••••"
             />
 
-            <ErrorBanner message={patientMutation.error} />
+            <ErrorBanner message={error} />
 
             <button
               type="submit"
-              disabled={patientMutation.loading}
               className="w-full py-3 rounded-xl bg-teal-600 text-white font-semibold
-                hover:bg-teal-700 disabled:opacity-60 transition-colors"
+                hover:bg-teal-700 transition-colors"
             >
-              {patientMutation.loading ? "Signing in…" : "Sign In"}
+              Sign In
             </button>
 
             <div className="flex items-center justify-between text-xs">
               <button
                 type="button"
-                onClick={() => { setMode(null); patientMutation.reset(); }}
+                onClick={() => { setMode(null); setError(""); }}
                 className="text-slate-400 hover:text-slate-600 transition-colors"
               >
                 ← Back
@@ -246,20 +220,19 @@ export default function Login() {
               accentColor="blue"
             />
 
-            <ErrorBanner message={doctorMutation.error} />
+            <ErrorBanner message={error} />
 
             <button
               type="submit"
-              disabled={doctorMutation.loading}
               className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold
-                hover:bg-blue-700 disabled:opacity-60 transition-colors"
+                hover:bg-blue-700 transition-colors"
             >
-              {doctorMutation.loading ? "Signing in…" : "Sign In"}
+              Sign In
             </button>
 
             <button
               type="button"
-              onClick={() => { setMode(null); doctorMutation.reset(); }}
+              onClick={() => { setMode(null); setError(""); }}
               className="w-full text-xs text-slate-400 hover:text-slate-600 transition-colors"
             >
               ← Back
