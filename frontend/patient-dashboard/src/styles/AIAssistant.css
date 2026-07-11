@@ -1,4 +1,0 @@
-.chat-log { display:flex; flex-direction:column; gap: var(--space-sm); padding-bottom: var(--space-md); }
-.chat-input-fixed { position: sticky; bottom: calc(var(--bottom-nav-height) + var(--space-sm)); padding-inline: var(--space-md); z-index: 5; }
-.suggestions-row { display:flex; gap: var(--space-xs); overflow-x:auto; padding-inline: var(--space-md); margin-inline: calc(var(--space-md) * -1); scrollbar-width:none; }
-.suggestions-row::-webkit-scrollbar{ display:none; }

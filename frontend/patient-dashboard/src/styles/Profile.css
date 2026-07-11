@@ -1,9 +1,0 @@
-.guest-card { text-align:center; padding: var(--space-xl) var(--space-md); }
-.locked-list { position: relative; }
-.locked-list::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(250,251,252,0) 0%, var(--color-bg) 90%);
-  pointer-events: none;
-}
-.locked-list .profile-menu-item { filter: blur(0.3px); opacity: 0.55; }
