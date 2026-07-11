@@ -1,54 +1,39 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { UIProvider } from './context/UIContext';
-import { AuthProvider } from './context/AuthContext';
-import GlobalEffects from './components/GlobalEffects';
-import Toast from './components/Toast';
-import RequireAuth from './components/RequireAuth';
-import Splash from './pages/Splash';
-import Dashboard from './pages/Dashboard';
-import HospitalSearch from './pages/HospitalSearch';
-import HospitalDetails from './pages/HospitalDetails';
-import AIAssistant from './pages/AIAssistant';
-import Profile from './pages/Profile';
-import BookAppointment from './pages/BookAppointment';
-import GetToken from './pages/GetToken';
-import MyAppointments from './pages/MyAppointments';
-import MyTokens from './pages/MyTokens';
+import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import DoctorLogin from './pages/DoctorLogin'
+import DashboardLayout from './layouts/DashboardLayout'
+import Dashboard from './pages/Dashboard'
+import LiveQueue from './pages/LiveQueue'
+import PatientSummary from './pages/PatientSummary'
+import Consultation from './pages/Consultation'
+import SOAPNotes from './pages/SOAPNotes'
+import PatientHistory from './pages/PatientHistory'
+import EmergencyAlerts from './pages/EmergencyAlerts'
+import Notifications from './pages/Notifications'
+import DoctorProfile from './pages/DoctorProfile'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <UIProvider>
-        <BrowserRouter>
-          <GlobalEffects />
-          <Toast />
-          <Routes>
-            <Route path="/" element={<Splash />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/hospital-search" element={<HospitalSearch />} />
-            <Route path="/hospital-details/:id" element={<HospitalDetails />} />
-            <Route path="/ai-assistant" element={<AIAssistant />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route
-              path="/book-appointment"
-              element={<RequireAuth reason="Book Appointment"><BookAppointment /></RequireAuth>}
-            />
-            <Route
-              path="/get-token"
-              element={<RequireAuth reason="Get Token"><GetToken /></RequireAuth>}
-            />
-            <Route
-              path="/my-appointments"
-              element={<RequireAuth reason="My Appointments"><MyAppointments /></RequireAuth>}
-            />
-            <Route
-              path="/my-tokens"
-              element={<RequireAuth reason="My Tokens"><MyTokens /></RequireAuth>}
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </UIProvider>
-    </AuthProvider>
-  );
+    <BrowserRouter>
+      <Routes>
+        {/* Root fallback route instantly shifts traffic onto our login screen */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<DoctorLogin />} />
+        
+        {/* Shielded Sub-Routes sharing the layout shell */}
+        <Route path="/doctor" element={<DashboardLayout />}>
+          <Route index element={<Navigate to="/doctor/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="queue" element={<LiveQueue />} />
+          <Route path="patient/:id/summary" element={<PatientSummary />} />
+          <Route path="consultation/:id" element={<Consultation />} />
+          <Route path="soap/:id" element={<SOAPNotes />} />
+          <Route path="patient/:id/history" element={<PatientHistory />} />
+          <Route path="emergency" element={<EmergencyAlerts />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="profile" element={<DoctorProfile />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
 }

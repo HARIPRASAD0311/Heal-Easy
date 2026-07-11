@@ -1,27 +1,36 @@
-import { API_BASE } from './config';
-import { getStoredSession } from './authService';
 
-async function request(path, options = {}) {
-  const session = await getStoredSession();
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(session?.idToken ? { Authorization: `Bearer ${session.idToken}` } : {}),
-    ...options.headers,
-  };
+import { API_BASE } from './config'
 
-  const response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const body = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(body?.error || `Request failed: ${response.status}`);
-  }
-
-  return body;
+function getToken() {
+  return localStorage.getItem('doctor_token') || ''
 }
 
-export const apiClient = {
-  get: (path) => request(path, { method: 'GET' }),
-  post: (path, data) => request(path, { method: 'POST', body: JSON.stringify(data) }),
-  patch: (path, data) => request(path, { method: 'PATCH', body: JSON.stringify(data) }),
-  delete: (path) => request(path, { method: 'DELETE' }),
-};
+async function request(method, path, body = undefined) {
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers,
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: res.statusText }))
+    throw new Error(err.error || err.message || `HTTP ${res.status}`)
+  }
+
+  if (res.status === 204) return null
+
+  return res.json()
+}
+
+export const api = {
+  get:    (path)         => request('GET',    path),
+  post:   (path, body)   => request('POST',   path, body),
+  put:    (path, body)   => request('PUT',    path, body),
+  patch:  (path, body)   => request('PATCH',  path, body),
+  delete: (path)         => request('DELETE', path),
+}
