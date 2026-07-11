@@ -1,52 +1,60 @@
-/**
- * HealEasy — Auth Context
- *
- * Stores the JWT token in localStorage and exposes the logged-in doctor.
- * Pages call useAuth() to get { doctor, login, logout, loading }.
- */
+// Replaces the previous version, which just derived a display name
+// from whatever email was typed in — no password check, no backend
+// call at all. This version does real Cognito sign-in.
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { authService } from '../api/services'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import * as authService from '../api/authService';
+import { getPatientProfile } from '../api/services';
 
-const AuthCtx = createContext(null)
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [doctor,  setDoctor]  = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // On mount try to restore session from stored token
   useEffect(() => {
-    const token = localStorage.getItem('doctor_token')
-    if (!token) { setLoading(false); return }
-
-    authService.getMe()
-      .then(data => setDoctor(data))
-      .catch(() => localStorage.removeItem('doctor_token'))
-      .finally(() => setLoading(false))
-  }, [])
+    authService
+      .getStoredSession()
+      .then(async (session) => {
+        if (!session) return;
+        const profile = await getPatientProfile(session.patientId).catch(() => null);
+        setUser({ ...session, ...profile });
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const login = useCallback(async (email, password) => {
-    const { token, doctor: doc } = await authService.login(email, password)
-    localStorage.setItem('doctor_token', token)
-    setDoctor(doc)
-    return doc
-  }, [])
+    const session = await authService.signIn(email, password);
+    const profile = await getPatientProfile(session.patientId).catch(() => null);
+    const record = { ...session, ...profile };
+    setUser(record);
+    return record;
+  }, []);
 
-  const logout = useCallback(async () => {
-    await authService.logout().catch(() => {})
-    localStorage.removeItem('doctor_token')
-    setDoctor(null)
-  }, [])
+  const signup = useCallback(async (email, password, hospitalId) => {
+    return authService.signUp(email, password, hospitalId);
+  }, []);
+
+  const confirmSignup = useCallback(async (email, code) => {
+    return authService.confirmSignUp(email, code);
+  }, []);
+
+  const logout = useCallback(() => {
+    authService.signOut();
+    setUser(null);
+  }, []);
 
   return (
-    <AuthCtx.Provider value={{ doctor, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, isAuthenticated: !!user, login, signup, confirmSignup, logout }}
+    >
       {children}
-    </AuthCtx.Provider>
-  )
+    </AuthContext.Provider>
+  );
 }
 
-export const useAuth = () => {
-  const ctx = useContext(AuthCtx)
-  if (!ctx) throw new Error('useAuth must be used inside AuthProvider')
-  return ctx
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
+  return ctx;
 }
